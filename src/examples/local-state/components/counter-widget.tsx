@@ -1,14 +1,26 @@
 import { Card } from '$components/card';
 import { Button } from '$components/button';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+
+const useCounter = (initial = 0) => {
+  const [count, setCount] = useState(initial);
+  const increment = useCallback(() => setCount((prev) => prev + 1), []);
+  const decrement = useCallback(() => setCount((prev) => prev - 1), []);
+  const reset = useCallback(() => setCount(initial), []);
+  return useMemo(
+    () => ({
+      count,
+      incrementCount: increment,
+      decrementCount: decrement,
+      resetCount: reset,
+    }),
+    [count, increment, decrement, reset],
+  );
+};
 
 export function CounterWidgetWrong() {
   console.log('CounterWidget rendered');
-  const [count, setCount] = useState(0);
-
-  const incrementCount = () => setCount(count + 1);
-  const decrementCount = () => setCount(count - 1);
-  const resetCount = () => setCount(0);
+  const { count, incrementCount, decrementCount, resetCount } = useCounter();
   return (
     <Card className="p-6">
       <h3 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
